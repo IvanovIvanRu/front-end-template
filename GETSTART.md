@@ -1,84 +1,75 @@
-# Если хочешь создать такой проект самостоятельно, действую по этой инструкции. Если хочешь просто получить эту сборку, делай форк: https://github.com/DJChel/lesson4
+# Вариант 2. Создание сборки с нуля
 
-## Шаг 1. Подготовка окружения
+Если нужна пошаговая инструкция по созданию такой сборки самостоятельно, следуйте ниже.
 
-Перед стартом убедись, что на твоём компьютере установлена Node.js.
+## 1. Подготовка окружения
 
-1. Создай новую папку для проекта (например, `my-vibe-project`) и открой её в редакторе кода (VS Code).
+Убедитесь, что на компьютере установлена Node.js.
 
-2. Открой терминал в этой папке и инициализируй проект, выполнив команду:
+1. Создайте новую папку проекта и откройте её в редакторе.
+2. Инициализируйте npm:
 
 ```bash
 npm init -y
-
 ```
 
-3. Установи Vite в качестве зависимости для разработки:
+3. Установите Vite:
 
 ```bash
 npm install vite --save-dev
-
 ```
 
 ---
 
-## Шаг 2. Структура проекта
+## 2. Структура проекта
 
-Создай в папке проекта следующую структуру файлов. Обрати внимание, что папка `src` будет содержать твой рабочий код, а `assets` — картинки:
+Создайте такую структуру:
 
 ```text
-my-vibe-project/
-├── node_modules/
+my-project/
 ├── src/
 │   ├── assets/
-│   │   └── logo.png      # Положи сюда любую картинку для теста
 │   ├── css/
 │   │   └── style.css
-│   └── js/
-│       └── main.js
+│   ├── js/
+│   │   └── main.js
+│   └── fonts/
 ├── index.html
 ├── package.json
 └── vite.config.js
-
 ```
 
 ---
 
-## Шаг 3. Заполнение файлов
+## 3. Создайте основные файлы
 
-### 1. Конфигурация Vite (`vite.config.js`)
-
-Создай этот файл в корне проекта. Он укажет сборщику правильно раскладывать картинки, стили и скрипты по папкам при финальной сборке, добавляя к ним уникальные хэши против кеширования:
+### `vite.config.js`
 
 ```javascript
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
-export defineConfig({
-  root: './', // Корень проекта, где лежит index.html
+export default defineConfig({
+  root: "./",
   build: {
-    outDir: 'dist', // Папка, куда соберётся готовый сайт
+    outDir: "dist",
     rollupOptions: {
       output: {
-        // Задаем правила именования файлов с хэшем сборки [hash]
         assetFileNames: (assetInfo) => {
-          let extType = assetInfo.name.split('.').at(-1);
+          let extType = assetInfo.name.split(".").at(-1);
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-            extType = 'img';
+            extType = "img";
           }
           return `assets/${extType}/[name]-[hash][extname]`;
         },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
       },
     },
   },
 });
-
 ```
 
-### 2. Главная страница (`index.html`)
-
-Создай файл в корне проекта. Мы подключаем стили и скрипты как **ES-модули** (`type="module"`), Vite сам разберётся с ними при сборке и добавит метки:
+### `index.html`
 
 ```html
 <!DOCTYPE html>
@@ -86,72 +77,39 @@ export defineConfig({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Мой Вайб-Проект</title>
+    <title>Мой проект</title>
     <link rel="stylesheet" href="./src/css/style.css" />
   </head>
   <body>
-    <div id="app">
-      <h1>Привет, фронтенд работает! 🚀</h1>
-      <p>Измени этот текст в редакторе, и страница обновится сама.</p>
-
-      <img id="logo" src="./src/assets/logo.png" alt="Логотип" />
-    </div>
-
+    <h1>Привет, фронтенд работает!</h1>
     <script type="module" src="./src/js/main.js"></script>
   </body>
 </html>
 ```
 
-### 3. Стили (`src/css/style.css`)
-
-Добавим немного базовых стилей:
+### `src/css/style.css`
 
 ```css
 body {
   font-family: sans-serif;
-  background-color: #f0f4f8;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
-}
-
-#app {
-  text-align: center;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-img {
-  max-width: 150px;
-  margin-top: 1rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
 }
 ```
 
-### 4. Скрипт (`src/js/main.js`)
-
-В JS мы можем импортировать картинки напрямую, если захотим вставить их динамически, но пока просто проверим работу скрипта в консоли:
+### `src/js/main.js`
 
 ```javascript
-console.log("JS успешно подключен и готов к работе!");
-
-// Пример того, как можно импортировать картинку прямо в JS (Vite это умеет):
-// import imgUrl from '../assets/logo.png';
-// document.getElementById('logo').src = imgUrl;
+console.log("JS подключён успешно");
 ```
 
 ---
 
-## Шаг 4. Настройка команд в `package.json`
+## 4. Настройка команд в `package.json`
 
-Открой файл `package.json`, найди там блок `"scripts"` и замени его на следующий:
+Добавьте в `scripts` следующие команды:
 
 ```json
 "scripts": {
@@ -159,33 +117,22 @@ console.log("JS успешно подключен и готов к работе!
   "build": "vite build",
   "preview": "vite preview"
 }
-
 ```
 
 ---
 
-## Как этим пользоваться?
+## 5. Запуск и сборка
 
-### 🚀 Разработка (Локальный сервер + авторелоад)
-
-В терминале проекта запусти команду:
+### Разработка
 
 ```bash
 npm run dev
-
 ```
 
-Терминал выдаст тебе ссылку вида `http://localhost:5173/`. Открой её в браузере. Теперь меняй любой код в HTML, CSS или JS — страница в браузере будет мгновенно обновляться сама при нажатии Ctrl+S (Cmd+S).
-
-### 📦 Сборка (Для выкатки на хостинг)
-
-Когда сайт будет готов и ты захочешь перенести его на хостинг, выполни команду:
+### Сборка для продакшена
 
 ```bash
 npm run build
-
 ```
 
-Vite создаст в корне папку `dist`. Внутри неё будет чистый, оптимизированный HTML, а в папке `assets` будут лежать твои CSS, JS и картинки, но уже со специальными **хэш-метками в именах** (например, `main-C4b8Xz1a.js`).
-
-Эти метки гарантируют, что как только ты обновишь сайт на хостинге, у твоих пользователей сразу загрузится новая версия, а старая не застрянет в кэше браузера! Распаковывай содержимое папки `dist` на хостинг — и проект готов.
+После сборки готовые файлы появятся в папке `dist`.
